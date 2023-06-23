@@ -357,9 +357,18 @@ p {
   }
   .answer {
     width: 100px;
-    height: 40px;
+    height: 80px;
   }
   h2 {
     font-size: large;
   }
+  .logo {
+    padding-left: 0px;
+  }
+  .slider__btn {
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1.25rem;
+  }
 }
+
