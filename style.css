@@ -352,4 +352,14 @@ p {
   h1 {
     font-size: 24px;
   }
+  .inner-header {
+    flex-direction: column;
+  }
+  .answer {
+    width: 100px;
+    height: 40px;
+  }
+  h2 {
+    font-size: large;
+  }
 }
