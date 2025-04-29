@@ -110,7 +110,7 @@ const getQuestions = async function () {
   const questions = await response.json();
   const results = questions.results;
   const correct_answers = [];
-  let answeredQuestions = 0; 
+  let answeredQuestions = 0; // Track how many questions have been answered
 
   results.forEach((question, i) => {
     const allAnswers = question.incorrect_answers.concat(question.correct_answer)
@@ -145,16 +145,19 @@ const getQuestions = async function () {
       const currentSlide = btn.closest('.slide');
       const allAnswers = currentSlide.querySelectorAll('.answer');
       
+      // Prevent answering the same question multiple times
       if (currentSlide.dataset.answered) return;
       currentSlide.dataset.answered = "true";
       answeredQuestions++;
       
+      // Mark the correct answer in green
       allAnswers.forEach(answerBtn => {
         if (correct_answers.some(correct => correct === answerBtn.textContent)) {
           answerBtn.style.background = "green";
         }
       });
-
+      
+      // Style the clicked button
       if (correct_answers.some(correct => correct === btn.textContent)) {
         correct++;
         btn.style.border = "3px solid darkgreen";
@@ -164,6 +167,7 @@ const getQuestions = async function () {
         btn.style.border = "3px solid darkred";
       }
 
+      // Check if all questions have been answered
       if (answeredQuestions === results.length) {
         setTimeout(() => {
           alert(`${correct}/10 correct answers!`);
