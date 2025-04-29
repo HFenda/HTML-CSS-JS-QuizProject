@@ -111,24 +111,28 @@ const getQuestions = async function () {
   const results = questions.results;
   const correct_answers = [];
   results.forEach((question, i) => {
-    const answers = shuffleArray(
-      question.incorrect_answers.concat(question.correct_answer)
-    );
+    // Filter out undefined answers before shuffling
+    const allAnswers = question.incorrect_answers.concat(question.correct_answer)
+      .filter(answer => answer !== undefined && answer !== null && answer.trim() !== '');
+    
+    const answers = shuffleArray(allAnswers);
     correct_answers.push(question.correct_answer);
 
+    // Only create buttons for defined answers
     const html = `<div class="question">
         <h2 style="display:flex; text-align:center">${question.question}</h2>
       </div>
       <div class="answers flex">
         <div class="row--1">
-          <button class="answer">${answers[0]}</button>
-          <button class="answer">${answers[1]}</button>
+          ${answers[0] ? `<button class="answer">${answers[0]}</button>` : ''}
+          ${answers[1] ? `<button class="answer">${answers[1]}</button>` : ''}
         </div>
         <div class="row--2">
-          <button class="answer">${answers[2]}</button>
-          <button class="answer">${answers[3]}</button>
+          ${answers[2] ? `<button class="answer">${answers[2]}</button>` : ''}
+          ${answers[3] ? `<button class="answer">${answers[3]}</button>` : ''}
         </div>
       </div>`;
+      
     slides.forEach((slide, j) => {
       if (i === j) slide.insertAdjacentHTML("beforeend", html);
     });
@@ -138,14 +142,28 @@ const getQuestions = async function () {
 
   btnAnswers.forEach((btn, n) => {
     btn.addEventListener("click", function () {
-      if (correct_answers.includes(btn.textContent)) {
-        btn.style.background = "green";
+      // Get all answer buttons for this question
+      const currentSlide = btn.closest('.slide');
+      const allAnswers = currentSlide.querySelectorAll('.answer');
+      
+      // Mark the correct answer in green
+      allAnswers.forEach(answerBtn => {
+        if (correct_answers.some(correct => correct === answerBtn.textContent)) {
+          answerBtn.style.background = "green";
+        }
+      });
+      
+      // Style the clicked button
+      if (correct_answers.some(correct => correct === btn.textContent)) {
         correct++;
+        btn.style.border = "3px solid darkgreen";
       } else {
-        btn.style.background = "red";
         incorrect++;
+        btn.style.background = "red";
+        btn.style.border = "3px solid darkred";
       }
-      if (n > 35) {
+
+      if (n >= btnAnswers.length - 1) { // Last question
         setTimeout(() => {
           alert(`${correct}/10 correct answers!`);
           location.reload();
