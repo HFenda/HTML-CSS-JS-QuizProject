@@ -110,15 +110,15 @@ const getQuestions = async function () {
   const questions = await response.json();
   const results = questions.results;
   const correct_answers = [];
+  let answeredQuestions = 0; 
+
   results.forEach((question, i) => {
-    // Filter out undefined answers before shuffling
     const allAnswers = question.incorrect_answers.concat(question.correct_answer)
       .filter(answer => answer !== undefined && answer !== null && answer.trim() !== '');
     
     const answers = shuffleArray(allAnswers);
     correct_answers.push(question.correct_answer);
 
-    // Only create buttons for defined answers
     const html = `<div class="question">
         <h2 style="display:flex; text-align:center">${question.question}</h2>
       </div>
@@ -140,20 +140,21 @@ const getQuestions = async function () {
 
   const btnAnswers = document.querySelectorAll(".answer");
 
-  btnAnswers.forEach((btn, n) => {
+  btnAnswers.forEach((btn) => {
     btn.addEventListener("click", function () {
-      // Get all answer buttons for this question
       const currentSlide = btn.closest('.slide');
       const allAnswers = currentSlide.querySelectorAll('.answer');
       
-      // Mark the correct answer in green
+      if (currentSlide.dataset.answered) return;
+      currentSlide.dataset.answered = "true";
+      answeredQuestions++;
+      
       allAnswers.forEach(answerBtn => {
         if (correct_answers.some(correct => correct === answerBtn.textContent)) {
           answerBtn.style.background = "green";
         }
       });
-      
-      // Style the clicked button
+
       if (correct_answers.some(correct => correct === btn.textContent)) {
         correct++;
         btn.style.border = "3px solid darkgreen";
@@ -163,7 +164,7 @@ const getQuestions = async function () {
         btn.style.border = "3px solid darkred";
       }
 
-      if (n >= btnAnswers.length - 1) { // Last question
+      if (answeredQuestions === results.length) {
         setTimeout(() => {
           alert(`${correct}/10 correct answers!`);
           location.reload();
