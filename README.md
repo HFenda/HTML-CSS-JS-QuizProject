@@ -1,4 +1,4 @@
-# Interactive Quiz Application
+# Interactive Quiz Application → [Live Demo](https://hfenda.github.io/HTML-CSS-JS-QuizProject/)
 
 ## 📌 Overview
 A dynamic web-based quiz application that fetches questions from the Open Trivia Database API, featuring:
